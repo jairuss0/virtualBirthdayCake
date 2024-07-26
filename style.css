@@ -1,6 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Lobster&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lobster&family=Playwrite+IS:wght@100..400&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 body {
   background-color: #333;
+  font-family: Arial, Helvetica, sans-serif, "Poppins";
 }
 
 .cake {
@@ -164,9 +165,54 @@ body {
     box-shadow: 0 0 10px rgba(255, 165, 0, 0.5), 0 0 20px rgba(255, 165, 0, 0.5), 0 0 60px rgba(255, 165, 0, 0.5), 0 0 80px rgba(255, 165, 0, 0.5);
   }
 }
+.greet {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5em 0em;
+}
+.greet h1 {
+  color: #fabcd3;
+  font-size: 4em;
+  text-shadow: rgba(241, 232, 240, 0.527) 0px 0px 37px;
+  font-family: "Playwrite IS", cursive;
+  font-optical-sizing: auto;
+  font-weight: bold;
+  font-style: normal;
+}
+
+.dancing-gif {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .test-microphone {
-  width: 100%;
+  width: 50%;
   height: 50px;
   background-color: rgb(255, 186, 238);
   transition: width 0.1s ease;
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1em;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+}
+footer span {
+  text-transform: capitalize;
+  color: #ccc;
+  text-shadow: rgba(241, 232, 240, 0.586) 0px 0px 37px;
+}
+
+.volume {
+  cursor: pointer;
+}
+.volume i {
+  font-size: 1.5em;
+  color: #cecccc;
 }/*# sourceMappingURL=style.css.map */

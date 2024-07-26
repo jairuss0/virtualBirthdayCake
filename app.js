@@ -1,9 +1,48 @@
+
 document.addEventListener("DOMContentLoaded", () => {
+
+  const volume = document.querySelector('.volume');
+  const volume_icon = document.querySelector('.volume-icon');
+
   let audioContext;
   let MicrophoneSource;
   let analyser;
+  let averageVolume;
+  let isMuted = true;
 
   AudioInput();
+
+
+  function isBlowing() {
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    analyser.getByteFrequencyData(dataArray);
+
+    // sum the dataArray then divide to the buffer length
+    averageVolume = dataArray.reduce((a, b) => a + b) / bufferLength;
+    console.log(averageVolume);
+
+    return averageVolume > 160;
+  }
+  
+
+  function candleBlow(){
+    requestAnimationFrame(candleBlow); // to capture noise every seconds
+    if(!isMuted){
+     
+      if(isBlowing()){
+        
+        console.log('Significant noise reached!');
+        triggerConfetti();
+        fireworksConfetti();
+      }
+
+    }
+    
+    
+  }
+
+
 
   function AudioInput() {
     // check if the media api is supported
@@ -13,34 +52,15 @@ document.addEventListener("DOMContentLoaded", () => {
           audio: true,
         })
         .then((stream) => {
-
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            MicrophoneSource = audioContext.createMediaStreamSource(stream);
-            analyser = audioContext.createAnalyser();
-
-            MicrophoneSource.connect(analyser);
-            analyser.fftSize = 256;
-
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
-
-            function analyzeAudio(){
-                requestAnimationFrame(analyzeAudio);
-                analyser.getByteFrequencyData(dataArray);
-
-                const averageVolume = dataArray.reduce((a, b) => a + b) / bufferLength;
-                console.log("Average Volume: "+ averageVolume);
-                if(averageVolume > 100){
-                    console.log('Significant audio input Captured!');
-                }
-                const element = document.querySelector('.test-microphone');
-                element.style.width = `${averageVolume}px`;
-                
-            }
-
-            analyzeAudio();
-            
-        })  
+          audioContext = new (window.AudioContext || window.AudioContext)();
+          MicrophoneSource = audioContext.createMediaStreamSource(stream);
+          analyser = audioContext.createAnalyser();
+          MicrophoneSource.connect(analyser);
+          analyser.fftSize = 256;
+         
+          requestAnimationFrame(candleBlow); // start the loop
+          
+        })
         .catch((error) => {
           console.log("Cannot Access Microphone: " + error);
           alert("Cannot Access Microphone: " + error);
@@ -49,8 +69,29 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("getUserMedia not supported on your browser!");
     }
   }
+  
+  
+  // audio capturing is disconnected by default
+  volume.addEventListener('click',() =>{
+    if(volume_icon.classList.contains('fa-volume-xmark')){
+        volume_icon.classList.remove('fa-volume-xmark')
+        volume_icon.classList.add('fa-volume-high');
+        isMuted = false;
+        MicrophoneSource.connect(analyser);
+       
+    }
+    else{
+        
+        volume_icon.classList.remove('fa-volume-high');
+        volume_icon.classList.add('fa-volume-xmark');
+        isMuted = true;
+        MicrophoneSource.disconnect(analyser);
+       
+    }
+  });
 
 });
+
 
 
 // function to trigger confetti
