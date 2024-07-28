@@ -233,6 +233,16 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    img{
+        width: 400px;
+        height: 400px;
+    }
+    
+    .right-amogus{
+        -webkit-transform: scaleX(-1);
+        transform: scaleX(-1);
+    }
 }
 
 .test-microphone{

@@ -188,6 +188,13 @@ body {
   justify-content: space-between;
   align-items: center;
 }
+.dancing-gif img {
+  width: 400px;
+  height: 400px;
+}
+.dancing-gif .right-amogus {
+  transform: scaleX(-1);
+}
 
 .test-microphone {
   width: 50%;
