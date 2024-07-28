@@ -170,11 +170,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.5em 0em;
+
 }
 .greet h1 {
   color: #fabcd3;
-  font-size: 4em;
+  font-size: 5em;
   text-shadow: rgba(241, 232, 240, 0.527) 0px 0px 37px;
   font-family: "Playwrite IS", cursive;
   font-optical-sizing: auto;

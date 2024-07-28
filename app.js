@@ -1,8 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+
   const microphone = document.querySelector(".microphone");
   const microphone_icon = document.querySelector(".microphone-icon");
   const greetText = document.querySelector(".greet");
   const dancingGif = document.querySelector(".dancing-gif");
+  const candle = document.querySelector('.candle');
 
   let audioContext;
   let MicrophoneSource;
@@ -24,18 +26,20 @@ document.addEventListener("DOMContentLoaded", () => {
     averageVolume = dataArray.reduce((a, b) => a + b) / bufferLength;
     console.log(averageVolume);
 
-    return averageVolume > 160;
+    return averageVolume > 100;
   }
 
   function candleBlow() {
     requestAnimationFrame(candleBlow); // to capture noise every seconds
     if (!isMuted) {
       if (isBlowing()) {
-        MicrophoneSource.disconnect(analyser);
+
+        MicrophoneSource.disconnect(analyser); // mute the microphone input
         console.log("Significant noise reached!");
+        candle.classList.add('candle-out');
+
         triggerConfetti(() =>{
           fireworksConfetti();
-          
           setTimeout(() =>{
             birthdaySong.play();
             birthdaySong.loop = true;
@@ -108,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function revealText(){
     greetText.style.visibility = 'visible';
     greetText.classList.add('animate__animated','animate__zoomInUp');
-
+    // perform the animation for the gif if the animation for greet text ended
     greetText.addEventListener('animationend', () => {
       dancingGif.style.visibility = 'visible';
       dancingGif.classList.add('animate__animated','animate__fadeIn');
@@ -140,13 +144,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     var interval = setInterval(function () {
       var timeLeft = animationEnd - Date.now();
-
+      // pause the fireworks sound if the timeleft is less than 0
+      // otherwise play the fireworks sound
       if (timeLeft <= 0) {
-
+        
         fireworksSound.pause();
         fireworksSound.currentTime = 0;
         return clearInterval(interval);
-        
+
       } else {
         console.log("ongoing fireworks");
         fireworksSound.play();
