@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blow Detection</title>
+    <style>
+        #indicator {
+            width: 50px;
+            height: 50px;
+            background-color: blue;
+            margin: 50px auto;
+            transition: width 0.2s;
+        }
+    </style>
+</head>
+<body>
+    <div id="indicator"></div>
+    <script>
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices
+                .getUserMedia({ audio: true })
+                .then(function (stream) {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const analyser = audioContext.createAnalyser();
+                    const microphone = audioContext.createMediaStreamSource(stream);
+                    const biquadFilter = audioContext.createBiquadFilter();
+
+                    // Configure the band-pass filter
+                    biquadFilter.type = "bandpass";
+                    biquadFilter.frequency.value = 1000; // Center frequency in Hz
+                    biquadFilter.Q.value = 10; // Quality factor
+
+                    // Connect the nodes: microphone -> biquadFilter -> analyser -> destination
+                    microphone.connect(biquadFilter);
+                    biquadFilter.connect(analyser);
+
+                    analyser.fftSize = 256;
+
+                    function isBlowing() {
+                        const bufferLength = analyser.frequencyBinCount;
+                        const dataArray = new Uint8Array(bufferLength);
+                        analyser.getByteFrequencyData(dataArray);
+
+                        let sum = 0;
+                        for (let i = 0; i < bufferLength; i++) {
+                            sum += dataArray[i];
+                        }
+                        const average = sum / bufferLength;
+
+                        return average;
+                    }
+
+                    function adjustWidth() {
+                        const indicator = document.getElementById('indicator');
+                        const averageVolume = isBlowing();
+                        
+                        // Change the width based on the volume
+                        console.log(averageVolume);
+                        const newWidth = Math.min(averageVolume * 2, 300); // Adjust the multiplier and max width as needed
+                        indicator.style.width = `${newWidth}px`;
+                    }
+
+                    setInterval(adjustWidth, 200); // Check every 200ms
+                })
+                .catch(function (err) {
+                    console.log('Unable to access microphone: ' + err);
+                });
+        } else {
+            console.log('getUserMedia not supported on your browser!');
+        }
+    </script>
+</body>
+</html>

@@ -166,6 +166,7 @@ body {
   }
 }
 .greet {
+  visibility: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -182,6 +183,7 @@ body {
 }
 
 .dancing-gif {
+  visibility: hidden;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -209,10 +211,11 @@ footer span {
   text-shadow: rgba(241, 232, 240, 0.586) 0px 0px 37px;
 }
 
-.volume {
+.microphone {
+  padding: 0.5em;
   cursor: pointer;
 }
-.volume i {
+.microphone i {
   font-size: 1.5em;
   color: #cecccc;
 }/*# sourceMappingURL=style.css.map */

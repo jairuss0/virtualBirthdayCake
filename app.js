@@ -1,17 +1,19 @@
-
 document.addEventListener("DOMContentLoaded", () => {
-
-  const volume = document.querySelector('.volume');
-  const volume_icon = document.querySelector('.volume-icon');
+  const microphone = document.querySelector(".microphone");
+  const microphone_icon = document.querySelector(".microphone-icon");
+  const greetText = document.querySelector(".greet");
+  const dancingGif = document.querySelector(".dancing-gif");
 
   let audioContext;
   let MicrophoneSource;
   let analyser;
   let averageVolume;
   let isMuted = true;
+  let confettiSound = new Audio("./sounds/confetti.mp3");
+  let fireworksSound = new Audio("./sounds/fireworks.mp3");
+  let birthdaySong = new Audio('./sounds/happynabdaymopa.mp3');
 
   AudioInput();
-
 
   function isBlowing() {
     const bufferLength = analyser.frequencyBinCount;
@@ -24,25 +26,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return averageVolume > 160;
   }
-  
 
-  function candleBlow(){
+  function candleBlow() {
     requestAnimationFrame(candleBlow); // to capture noise every seconds
-    if(!isMuted){
-     
-      if(isBlowing()){
-        
-        console.log('Significant noise reached!');
-        triggerConfetti();
-        fireworksConfetti();
+    if (!isMuted) {
+      if (isBlowing()) {
+        MicrophoneSource.disconnect(analyser);
+        console.log("Significant noise reached!");
+        triggerConfetti(() =>{
+          fireworksConfetti();
+          
+          setTimeout(() =>{
+            birthdaySong.play();
+            birthdaySong.loop = true;
+            revealText();
+          },500);
+        });
+       
       }
-
     }
-    
-    
   }
-
-
 
   function AudioInput() {
     // check if the media api is supported
@@ -57,9 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
           analyser = audioContext.createAnalyser();
           MicrophoneSource.connect(analyser);
           analyser.fftSize = 256;
-         
+
           requestAnimationFrame(candleBlow); // start the loop
-          
         })
         .catch((error) => {
           console.log("Cannot Access Microphone: " + error);
@@ -69,67 +71,103 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("getUserMedia not supported on your browser!");
     }
   }
-  
-  
+
   // audio capturing is disconnected by default
-  volume.addEventListener('click',() =>{
-    if(volume_icon.classList.contains('fa-volume-xmark')){
-        volume_icon.classList.remove('fa-volume-xmark')
-        volume_icon.classList.add('fa-volume-high');
+  microphone.addEventListener("click", () => {
+    if (microphone_icon.classList.contains("fa-microphone-slash")) {
+      microphone_icon.classList.remove("fa-microphone-slash");
+      microphone_icon.classList.add("fa-microphone");
+      isMuted = false;
+      MicrophoneSource.connect(analyser);
+    } else {
+      microphone_icon.classList.remove("fa-microphone");
+      microphone_icon.classList.add("fa-microphone-slash");
+      isMuted = true;
+      MicrophoneSource.disconnect(analyser);
+    }
+  });
+
+  // key event for muting mic
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "m") {
+      if (microphone_icon.classList.contains("fa-microphone-slash")) {
+        microphone_icon.classList.remove("fa-microphone-slash");
+        microphone_icon.classList.add("fa-microphone");
         isMuted = false;
         MicrophoneSource.connect(analyser);
-       
-    }
-    else{
-        
-        volume_icon.classList.remove('fa-volume-high');
-        volume_icon.classList.add('fa-volume-xmark');
+      } else {
+        microphone_icon.classList.remove("fa-microphone");
+        microphone_icon.classList.add("fa-microphone-slash");
         isMuted = true;
         MicrophoneSource.disconnect(analyser);
-       
+      }
     }
   });
 
-});
 
+  function revealText(){
+    greetText.style.visibility = 'visible';
+    greetText.classList.add('animate__animated','animate__zoomInUp');
 
-
-// function to trigger confetti
-function triggerConfetti() {
-  confetti({
-    particleCount: 100,
-    spread: 70,
-    origin: { y: 0.6 },
-  });
-}
-
-function fireworksConfetti() {
-  var duration = 15 * 1000;
-  var animationEnd = Date.now() + duration;
-  var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-  function randomInRange(min, max) {
-    return Math.random() * (max - min) + min;
+    greetText.addEventListener('animationend', () => {
+      dancingGif.style.visibility = 'visible';
+      dancingGif.classList.add('animate__animated','animate__fadeIn');
+    });
+    
   }
 
-  var interval = setInterval(function () {
-    var timeLeft = animationEnd - Date.now();
+  // function to trigger confetti send a fireworks confetti as a callback
+  function triggerConfetti(callback) {
+    confettiSound.play();
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+    });
+    setTimeout(() => {
+      callback();
+    },1000);
+  }
 
-    if (timeLeft <= 0) {
-      return clearInterval(interval);
+  function fireworksConfetti() {
+    var duration = 15 * 1000;
+    var animationEnd = Date.now() + duration;
+    var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    function randomInRange(min, max) {
+      return Math.random() * (max - min) + min;
     }
 
-    var particleCount = 50 * (timeLeft / duration);
-    // since particles fall down, start a bit higher than random
-    confetti({
-      ...defaults,
-      particleCount,
-      origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-    });
-    confetti({
-      ...defaults,
-      particleCount,
-      origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-    });
-  }, 250);
-}
+    var interval = setInterval(function () {
+      var timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+
+        fireworksSound.pause();
+        fireworksSound.currentTime = 0;
+        return clearInterval(interval);
+        
+      } else {
+        console.log("ongoing fireworks");
+        fireworksSound.play();
+        fireworksSound.addEventListener('ended', function() {
+          this.currentTime = 0;
+          this.play();
+        }, false);
+      }
+
+      var particleCount = 50 * (timeLeft / duration);
+      // since particles fall down, start a bit higher than random
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      });
+    }, 250);
+  }
+});
