@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let isMuted = true;
   let confettiSound = new Audio("./sounds/confetti.mp3");
   let fireworksSound = new Audio("./sounds/fireworks.mp3");
-  let birthdaySong = new Audio('./sounds/happynabdaymopa.mp3');
+  let birthdaySong = new Audio('./sounds/itsmybirthday.mp3');
 
   AudioInput();
 
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     averageVolume = dataArray.reduce((a, b) => a + b) / bufferLength;
     console.log(averageVolume);
 
-    return averageVolume > 100;
+    return averageVolume > 150; // change according to your desire
   }
 
   function candleBlow() {
@@ -36,15 +36,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         MicrophoneSource.disconnect(analyser); // mute the microphone input
         console.log("Significant noise reached!");
-        candle.classList.add('candle-out');
 
+        candle.classList.add('candle-out');
         triggerConfetti(() =>{
+
           fireworksConfetti();
+
           setTimeout(() =>{
             birthdaySong.play();
             birthdaySong.loop = true;
             revealText();
           },500);
+          
         });
        
       }

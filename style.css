@@ -170,11 +170,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  
+  padding: 0.5em 0em;
 }
 .greet h1 {
   color: #fabcd3;
-  font-size: 5em;
+  font-size: 4em;
   text-shadow: rgba(241, 232, 240, 0.527) 0px 0px 37px;
   font-family: "Playwrite IS", cursive;
   font-optical-sizing: auto;
@@ -219,8 +219,14 @@ footer span {
 }
 
 .microphone {
-  padding: 0.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
+  gap: 0.5em;
+}
+.microphone span {
+  color: #cecccc;
 }
 .microphone i {
   font-size: 1.5em;
