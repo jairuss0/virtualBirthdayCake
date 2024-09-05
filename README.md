@@ -1,2 +1,2 @@
 # virtualBirthdayCake
-A virtual cake present I made to surprise your special ones!
+A virtual cake present to surprise your special ones!
